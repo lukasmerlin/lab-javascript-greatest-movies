@@ -67,7 +67,48 @@ function orderAlphabetically(moviesArray) {
 
 // BONUS - Iteration 7: Time Format - Turn duration of the movies from hours to minutes
 function turnHoursToMinutes(moviesArray) {
+    let moviesCopy = JSON.parse(JSON.stringify(moviesArray))
+    let moviesInMinutes = moviesCopy.map(function (movie) {
+        let duration = movie.duration
+        let hours = 0
+        let minutes = 0
+        if (duration.includes("h")) {
+            hours = parseInt(duration)
+        }
+        if (duration.includes("min")) {
+            minutes = parseInt(duration.slice(duration.indexOf(" ") + 1))
+        }
+        let totalMinutes = hours * 60 + minutes
+        movie.duration = totalMinutes
+        return movie
+    })
+    return moviesInMinutes
 }
 
 // BONUS - Iteration 8: Best yearly score average - Best yearly score average
-function bestYearAvg(moviesArray) {}
+function bestYearAvg(moviesArray) {
+    if (moviesArray.length === 0) {
+        return null
+    }
+    let moviesCopy = JSON.parse(JSON.stringify(moviesArray))
+    let sortedMovies = moviesCopy.sort(function (a, b) {
+        return a.year - b.year
+    })
+    let bestYear = sortedMovies[0].year
+    let bestAverage = scoresAverage(sortedMovies)
+    for (let i = 0; i < sortedMovies.length; i++) {
+        let currentYear = sortedMovies[i].year
+        let currentMovies = []
+        while (sortedMovies[i].year === currentYear) {
+            currentMovies.push(sortedMovies[i])
+            i++
+        }
+        i--
+        let currentAverage = scoresAverage(currentMovies)
+        if (currentAverage > bestAverage) {
+            bestYear = currentYear
+            bestAverage = currentAverage
+        }
+    }
+    return `The best year was ${bestYear} with an average score of ${bestAverage}`
+}
